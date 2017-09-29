@@ -8,7 +8,6 @@
  * @author Breno Viana
  * @version 22/09/2017
  */
-#include <vector>
 #include <iostream>
 
 #define SIZE 200
