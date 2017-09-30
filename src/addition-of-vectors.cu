@@ -8,7 +8,7 @@
  * To run: ./addition-of-vectors.x SIZE_OF_VECTORS MAX_RANDOM_VALUE
  *
  * @author Breno Viana
- * @version 22/09/2017
+ * @version 29/09/2017
  */
 #include <ctime>
 #include <cstdlib>
