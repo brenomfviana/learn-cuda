@@ -5,13 +5,13 @@ This repository contains simple CUDA codes created for mere learning.
 #### How to compile
 
 ```bash
-nvcc file-name.cu -o program-name.x
+nvcc -I include file-name.cu -o program-name.x
 ```
 
 #### How to run
 
 ```bash
-./program-name.x
+./program-name.x ARGS
 ```
 
 ## CUDA Toolkit Documentation
