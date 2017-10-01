@@ -1,7 +1,8 @@
+*.x
 *.i
 *.ii
 *.gpu
 *.ptx
 *.cubin
 *.fatbin
-src/bin/
+test/
