@@ -1,8 +1,8 @@
 /*
  * This code performs a simple addition of vectors.
  *
- * Code adapted from a CUDA tutorial (Video tutorial series on "CUDA Programming
- * for Beginners" - Tutorial 1), link:
+ * Code adapted from: Video tutorial series on "CUDA Programming
+ * for Beginners" - Tutorial 1, link:
  * http://hpsc-mandar.blogspot.com.br/2016/08/video-tutorial-series-on-cuda.html.
  *
  * To run: ./addition-of-vectors.x SIZE_OF_VECTORS MAX_RANDOM_VALUE

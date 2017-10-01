@@ -1,7 +1,7 @@
 /*
  * This code performs a simple matrix multiplication without memory sharing.
  *
- * Code adapted from Matrix Multiplication with CUDA — A basic introduction to
+ * Code adapted from: Matrix Multiplication with CUDA — A basic introduction to
  * the CUDA programming model, link:
  * https://www.shodor.org/media/content/petascale/materials/UPModules/matrixMultiplication/moduleDocument.pdf
  *
