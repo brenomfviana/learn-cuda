@@ -1,14 +1,27 @@
-# Learn CUDA
+# CUDA code for learning
 
 This repository contains simple CUDA codes created for mere learning.
 
-#### How to compile
+## TODO
+
+- [x] Addition of vectors
+- [x] Matrix multiplication
+- [ ] Matrix multiplication with shared memory
+- [ ] Bubblesort
+
+## How to test the codes
+
+### Requirements
+
+- CUDA Toolkit 8.0
+
+### How to compile
 
 ```bash
 nvcc -I include file-name.cu -o program-name.x
 ```
 
-#### How to run
+### How to run
 
 ```bash
 ./program-name.x ARGS
