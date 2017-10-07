@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     // Size of memory to be allocated
     int sa = size * sizeof(int);
     // Create vectors
-    int m[size], n[size], p[size], *mgpu, *ngpu, *pgpu;
+    int m[size], n[size], p[size], *d_m, *d_n, *d_p;
     // Initialize the vectors on CPU
     srand(time(NULL));
     for (int i = 0; i < size; i++) {
@@ -47,24 +47,24 @@ int main(int argc, char* argv[]) {
     }
     // Allocatte vectors on GPU and transfer arrays from CPU (host) memory to
     // GPU (device)
-    CudaSafeCall(cudaMalloc(&mgpu, sa));
-    CudaSafeCall(cudaMemcpy(mgpu, m, sa, cudaMemcpyHostToDevice));
-    CudaSafeCall(cudaMalloc(&ngpu, sa));
-    CudaSafeCall(cudaMemcpy(ngpu, n, sa, cudaMemcpyHostToDevice));
-    CudaSafeCall(cudaMalloc(&pgpu, sa));
+    CudaSafeCall(cudaMalloc(&d_m, sa));
+    CudaSafeCall(cudaMemcpy(d_m, m, sa, cudaMemcpyHostToDevice));
+    CudaSafeCall(cudaMalloc(&d_n, sa));
+    CudaSafeCall(cudaMemcpy(d_n, n, sa, cudaMemcpyHostToDevice));
+    CudaSafeCall(cudaMalloc(&d_p, sa));
     // Blocks per grid
     dim3 dim_grid(1, 1);
     // Threads per block
     dim3 dim_block(size, 1);
     // Run addition of vectors
-    vec_add<<<dim_grid, dim_block>>>(mgpu, ngpu, pgpu);
+    vec_add<<<dim_grid, dim_block>>>(d_m, d_n, d_p);
     CudaCheckError();
     // Tranfer results from GPU (device) memory to CPU (host) memory
-    CudaSafeCall(cudaMemcpy(p, pgpu, sa, cudaMemcpyDeviceToHost));
+    CudaSafeCall(cudaMemcpy(p, d_p, sa, cudaMemcpyDeviceToHost));
     // De-allocate GPU memory
-    cudaFree(mgpu);
-    cudaFree(ngpu);
-    cudaFree(pgpu);
+    cudaFree(d_m);
+    cudaFree(d_n);
+    cudaFree(d_p);
     std::cout << "Vector 1:" << std::endl;
     for (int i = 0; i < size; i++) {
         std::cout << m[i] << " ";

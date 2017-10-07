@@ -35,7 +35,7 @@ typedef struct {
  * @param B Matrix B
  * @param C Resulting matrix
  */
-__global__ void mm_gpu(Matrix A, Matrix B, Matrix C) {
+__global__ void mmd__(Matrix A, Matrix B, Matrix C) {
     // Element of the matrix C
     float e = 0.0;
     // Get matrix row
@@ -60,42 +60,42 @@ __global__ void mm_gpu(Matrix A, Matrix B, Matrix C) {
  * @param C Resulting matrix
  */
 void matrix_multiplication(const Matrix A, const Matrix B, Matrix C) {
-    // Auxiliary matrices
-    Matrix agpu, bgpu, cgpu;
+    // Device matrices
+    Matrix d_a, d_b, d_c;
     // Load A to device memory
-    agpu.height = A.height;
-    agpu.width  = A.width;
+    d_a.height = A.height;
+    d_a.width  = A.width;
     size_t size = A.width * A.height * sizeof(float);
-    CudaSafeCall(cudaMalloc(&agpu.elements, size));
-    CudaSafeCall(cudaMemcpy(agpu.elements, A.elements, size,
+    CudaSafeCall(cudaMalloc(&d_a.elements, size));
+    CudaSafeCall(cudaMemcpy(d_a.elements, A.elements, size,
                  cudaMemcpyHostToDevice));
     // Load B to device memory
-    bgpu.height = B.height;
-    bgpu.width  = B.width;
+    d_b.height = B.height;
+    d_b.width  = B.width;
     size        = B.width * B.height * sizeof(float);
-    CudaSafeCall(cudaMalloc(&bgpu.elements, size));
-    CudaSafeCall(cudaMemcpy(bgpu.elements, B.elements, size,
+    CudaSafeCall(cudaMalloc(&d_b.elements, size));
+    CudaSafeCall(cudaMemcpy(d_b.elements, B.elements, size,
                             cudaMemcpyHostToDevice));
     // Allocate C in device memory
-    cgpu.height = C.height;
-    cgpu.width  = C.width;
+    d_c.height = C.height;
+    d_c.width  = C.width;
     size        = C.width * C.height * sizeof(float);
-    CudaSafeCall(cudaMalloc(&cgpu.elements, size));
+    CudaSafeCall(cudaMalloc(&d_c.elements, size));
     // Blocks per grid
     dim3 dimBlock(BLOCK_SIZE, BLOCK_SIZE);
     // Threads per block
     dim3 dimGrid((B.width  + dimBlock.x - 1) / dimBlock.x,
                  (A.height + dimBlock.y - 1) / dimBlock.y);
-    mm_gpu<<<dimGrid, dimBlock>>>(agpu, bgpu, cgpu);
+    mmd__<<<dimGrid, dimBlock>>>(d_a, d_b, d_c);
     CudaCheckError();
     CudaSafeCall(cudaThreadSynchronize());
     // Read C from device memory
-    CudaSafeCall(cudaMemcpy(C.elements, cgpu.elements, size,
+    CudaSafeCall(cudaMemcpy(C.elements, d_c.elements, size,
                  cudaMemcpyDeviceToHost));
     // Free device memory
-    cudaFree(agpu.elements);
-    cudaFree(bgpu.elements);
-    cudaFree(cgpu.elements);
+    cudaFree(d_a.elements);
+    cudaFree(d_b.elements);
+    cudaFree(d_c.elements);
 }
 
 int main(int argc, char* argv[]) {
