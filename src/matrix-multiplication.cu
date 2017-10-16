@@ -13,7 +13,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
-#include "error-checking.h"
+#include "error-checking.cuh"
 
 // Thread block size
 #define BLOCK_SIZE 16

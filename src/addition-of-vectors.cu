@@ -12,7 +12,7 @@
  */
 #include <ctime>
 #include <cstdlib>
-#include "error-checking.h"
+#include "error-checking.cuh"
 
 /*!
  * Apply the sum of vectors on GPU.
