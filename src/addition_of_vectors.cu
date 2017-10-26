@@ -5,14 +5,14 @@
  * for Beginners" - Tutorial 1, link:
  * http://hpsc-mandar.blogspot.com.br/2016/08/video-tutorial-series-on-cuda.html.
  *
- * To run: ./addition-of-vectors.x SIZE_OF_VECTORS MAX_RANDOM_VALUE
+ * To run: ./addition_of_vectors.x SIZE_OF_VECTORS MAX_RANDOM_VALUE
  *
  * @author Breno Viana
  * @version 29/09/2017
  */
 #include <ctime>
 #include <cstdlib>
-#include "error-checking.cuh"
+#include "error_checking.cuh"
 
 /*!
  * Apply the sum of vectors on GPU.
@@ -62,9 +62,10 @@ int main(int argc, char* argv[]) {
     // Tranfer results from GPU (device) memory to CPU (host) memory
     CudaSafeCall(cudaMemcpy(p, d_p, sa, cudaMemcpyDeviceToHost));
     // De-allocate GPU memory
-    cudaFree(d_m);
-    cudaFree(d_n);
-    cudaFree(d_p);
+    CudaSafeCall(cudaFree(d_m));
+    CudaSafeCall(cudaFree(d_n));
+    CudaSafeCall(cudaFree(d_p));
+    // Print vectors
     std::cout << "Vector 1:" << std::endl;
     for (int i = 0; i < size; i++) {
         std::cout << m[i] << " ";
@@ -75,7 +76,7 @@ int main(int argc, char* argv[]) {
         std::cout << n[i] << " ";
     }
     std::cout << std::endl << std::endl;
-    // Print results
+    // Print result
     std::cout << "Resulting vector:" << std::endl;
     for (int i = 0; i < size; i++) {
         std::cout << p[i] << " ";

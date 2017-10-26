@@ -5,15 +5,14 @@
  * the CUDA programming model, link:
  * https://www.shodor.org/media/content/petascale/materials/UPModules/matrixMultiplication/moduleDocument.pdf
  *
- * To run: ./matrix-multiplication.x A_B_HEIGHT A_WIDTH B_WIDTH MAX_RANDOM_VALUE
+ * To run: ./matrix_multiplication.x A_B_HEIGHT A_WIDTH B_WIDTH MAX_RANDOM_VALUE
  *
  * @author Breno Viana
  * @version 29/09/2017
  */
 #include <ctime>
 #include <cstdlib>
-#include <iostream>
-#include "error-checking.cuh"
+#include "error_checking.cuh"
 
 // Thread block size
 #define BLOCK_SIZE 16
@@ -43,11 +42,12 @@ __global__ void mmd__(Matrix A, Matrix B, Matrix C) {
     // Get matrix column
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     // Check if row and column are not valid
-    if(row > A.height || col > B.width) return;
+    if (row > C.height || col > C.width) {
+        return;
+    }
     // Multiplication
     for (int i = 0; i < A.width; ++i) {
-        e += (A.elements[row * A.width + i]) *
-             (B.elements[i * B.width + col]);
+        e += (A.elements[row * A.width + i]) * (B.elements[i * B.width + col]);
         C.elements[row * C.width + col] = e;
     }
 }
@@ -63,8 +63,8 @@ void matrix_multiplication(const Matrix A, const Matrix B, Matrix C) {
     // Device matrices
     Matrix d_a, d_b, d_c;
     // Load A to device memory
-    d_a.height = A.height;
-    d_a.width  = A.width;
+    d_a.height  = A.height;
+    d_a.width   = A.width;
     size_t size = A.width * A.height * sizeof(float);
     CudaSafeCall(cudaMalloc(&d_a.elements, size));
     CudaSafeCall(cudaMemcpy(d_a.elements, A.elements, size,
@@ -72,14 +72,14 @@ void matrix_multiplication(const Matrix A, const Matrix B, Matrix C) {
     // Load B to device memory
     d_b.height = B.height;
     d_b.width  = B.width;
-    size        = B.width * B.height * sizeof(float);
+    size       = B.width * B.height * sizeof(float);
     CudaSafeCall(cudaMalloc(&d_b.elements, size));
     CudaSafeCall(cudaMemcpy(d_b.elements, B.elements, size,
                             cudaMemcpyHostToDevice));
     // Allocate C in device memory
     d_c.height = C.height;
     d_c.width  = C.width;
-    size        = C.width * C.height * sizeof(float);
+    size       = C.width * C.height * sizeof(float);
     CudaSafeCall(cudaMalloc(&d_c.elements, size));
     // Blocks per grid
     dim3 dimBlock(BLOCK_SIZE, BLOCK_SIZE);
@@ -93,9 +93,9 @@ void matrix_multiplication(const Matrix A, const Matrix B, Matrix C) {
     CudaSafeCall(cudaMemcpy(C.elements, d_c.elements, size,
                  cudaMemcpyDeviceToHost));
     // Free device memory
-    cudaFree(d_a.elements);
-    cudaFree(d_b.elements);
-    cudaFree(d_c.elements);
+    CudaSafeCall(cudaFree(d_a.elements));
+    CudaSafeCall(cudaFree(d_b.elements));
+    CudaSafeCall(cudaFree(d_c.elements));
 }
 
 int main(int argc, char* argv[]) {
@@ -133,20 +133,26 @@ int main(int argc, char* argv[]) {
     matrix_multiplication(A, B, C);
 
     // Print matrix A
+    std::cout << "Matrix A" << std::endl;
     for(int i = 0; i < A.height; i++) {
         for(int j = 0; j < A.width; j++) {
             std::cout << A.elements[i * A.height + j] << " ";
         }
         std::cout << std::endl;
     }
+    std::cout << std::endl;
     // Print matrix B
+    std::cout << "Matrix B\n" << std::endl;
     for(int i = 0; i < B.height; i++) {
         for(int j = 0; j < B.width; j++) {
             std::cout << B.elements[i * B.height + j] << " ";
         }
         std::cout << std::endl;
     }
+    std::cout << std::endl;
     // Print result (matrix C)
+    std::cout << "Result of matrix multiplication" << std::endl
+              << "Matrix C" << std::endl;
     for(int i = 0; i < C.height; i++) {
         for(int j = 0; j < C.width; j++) {
             std::cout << C.elements[i * C.height + j] << " ";
