@@ -7,7 +7,8 @@ This repository contains simple CUDA codes created for mere learning.
 - [x] Addition of vectors
 - [x] Matrix multiplication
 - [ ] Matrix multiplication with shared memory
-- [ ] Bubblesort
+- [x] Linear interpolation
+- [ ] Bilinear interpolation
 
 ## How to test the codes
 
