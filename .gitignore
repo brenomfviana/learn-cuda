@@ -5,4 +5,6 @@
 *.ptx
 *.cubin
 *.fatbin
+*.ppm
 test/
+build/
