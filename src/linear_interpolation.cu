@@ -4,6 +4,7 @@
  *
  * To run: ./linear_interpolation.x WIDTH HEIGHT UPPER_COLOR LOWER_COLOR
  * Color format: "R G B"
+ * For example: ./linear_interpolation.x 200 100 "127.5 178.5 255" "255 255 255"
  *
  * @author Breno Viana
  * @version 26/10/2017
@@ -91,11 +92,11 @@ __global__ void li__(Image img, Color* upper_color, Color* lower_color) {
     // Progression of the gradient
     float y = float(row) / float(img.height);
     // Get color
-    Color c = (255.99 * (((1 - y) * (*lower_color)) + (y * (*upper_color))));
+    Color c = (((1 - y) * (*lower_color)) + (y * (*upper_color)));
     // Set pixel color
-    img.pixels[((img.height - row - 1) * img.width * 3) + (col * 3)]     = c.r;
-    img.pixels[((img.height - row - 1) * img.width * 3) + (col * 3) + 1] = c.g;
-    img.pixels[((img.height - row - 1) * img.width * 3) + (col * 3) + 2] = c.b;
+    img.pixels[((img.height - row - 1) * img.width * RGB_SIZE) + (col * RGB_SIZE)]     = c.r;
+    img.pixels[((img.height - row - 1) * img.width * RGB_SIZE) + (col * RGB_SIZE) + 1] = c.g;
+    img.pixels[((img.height - row - 1) * img.width * RGB_SIZE) + (col * RGB_SIZE) + 2] = c.b;
 }
 
 /*!
@@ -149,19 +150,19 @@ int main(int argc, char* argv[]) {
     g = strtok(NULL, " ");
     b = strtok(NULL, " ");
     Color upper_color;
-    upper_color.r = std::atof(r) / float(255); // 127.5
-    upper_color.g = std::atof(g) / float(255); // 175.5
-    upper_color.b = std::atof(b) / float(255); // 255
+    upper_color.r = std::atof(r);
+    upper_color.g = std::atof(g);
+    upper_color.b = std::atof(b);
     // Get lower color
     r = strtok(argv[4], " ");
     g = strtok(NULL, " ");
     b = strtok(NULL, " ");
     Color lower_color;
-    lower_color.r = std::atof(r) / float(255);
-    lower_color.g = std::atof(g) / float(255);
-    lower_color.b = std::atof(b) / float(255);
+    lower_color.r = std::atof(r);
+    lower_color.g = std::atof(g);
+    lower_color.b = std::atof(b);
 
-    // Linear interpolation
+    // Get image
     generate_image(img, upper_color, lower_color);
 
     // OUTPUT
@@ -171,7 +172,7 @@ int main(int argc, char* argv[]) {
     outfile << img.width << " " << img.height << std::endl;
     outfile << "255" << std::endl;
     // Print image
-    outfile.write(img.pixels, img.width * img.height * 3);
+    outfile.write(img.pixels, img.width * img.height * RGB_SIZE);
     outfile.close();
     // Program successfully completed
     return EXIT_SUCCESS;
