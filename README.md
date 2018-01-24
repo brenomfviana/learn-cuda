@@ -8,7 +8,7 @@ This repository contains simple CUDA codes created for mere learning.
 - [x] Matrix multiplication
 - [ ] Matrix multiplication with shared memory
 - [x] Linear interpolation
-- [ ] Bilinear interpolation
+- [x] Bilinear interpolation
 
 ## How to test the codes
 
@@ -19,7 +19,7 @@ This repository contains simple CUDA codes created for mere learning.
 ### How to compile
 
 ```bash
-nvcc -I include file-name.cu -o program-name.x
+nvcc -I include/ file-name.cu -o program-name.x
 ```
 
 ### How to run
