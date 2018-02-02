@@ -6,7 +6,7 @@ This repository contains simple CUDA codes created for mere learning.
 
 - [x] Addition of vectors
 - [x] Matrix multiplication
-- [ ] Matrix multiplication with shared memory
+- [x] Matrix multiplication with shared memory
 - [x] Linear interpolation
 - [x] Bilinear interpolation
 
