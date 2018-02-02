@@ -8,10 +8,9 @@
  * For example: ./bilinear_interpolation.x 200 100 "0 255 0" "0 0 0" "255 255 0" "255 0 0"
  *
  * @author Breno Viana
- * @version 04/10/2017
+ * @version 02/02/2018
  */
 #include <fstream>
-#include <iostream>
 #include "error_checking.cuh"
 
 // Thread block size
@@ -94,7 +93,7 @@ void bi__(Image img, Color* upper_left, Color* lower_left,
     // Get matrix column
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     // Check if row and column are not valid
-    if (row > img.height || col > img.width) {
+    if (row >= img.height || col >= img.width) {
       return;
     }
     // Progression of the gradient
@@ -102,9 +101,9 @@ void bi__(Image img, Color* upper_left, Color* lower_left,
     float y = float(row) / float(img.height);
     // Get color
     Color c = ((1 - y) * ((1 - x) * (*lower_left) + x * (*lower_right)) +
-    y  * ((1 - x) * (*upper_left) + x * (*upper_right)));
+              y  * ((1 - x) * (*upper_left) + x * (*upper_right)));
     // Set pixel color
-    img.pixels[((img.height - row - 1) * img.width * RGB_SIZE) + (col * RGB_SIZE)]   = c.r;
+    img.pixels[((img.height - row - 1) * img.width * RGB_SIZE) + (col * RGB_SIZE)] = c.r;
     img.pixels[((img.height - row - 1) * img.width * RGB_SIZE) + (col * RGB_SIZE) + 1] = c.g;
     img.pixels[((img.height - row - 1) * img.width * RGB_SIZE) + (col * RGB_SIZE) + 2] = c.b;
 }
@@ -123,20 +122,20 @@ void generate_image(Image img, const Color upper_left, const Color lower_left,
     // Load colors to devive memory
     Color* d_upper_left;
     CudaSafeCall(cudaMalloc((void**)& d_upper_left, sizeof(Color)));
-    cudaMemcpy(d_upper_left, &upper_left, sizeof(Color),
-    cudaMemcpyHostToDevice);
+    CudaSafeCall(cudaMemcpy(d_upper_left, &upper_left, sizeof(Color),
+      cudaMemcpyHostToDevice));
     Color* d_lower_left;
     CudaSafeCall(cudaMalloc((void**)& d_lower_left, sizeof(Color)));
-    cudaMemcpy(d_lower_left, &lower_left, sizeof(Color),
-    cudaMemcpyHostToDevice);
+    CudaSafeCall(cudaMemcpy(d_lower_left, &lower_left, sizeof(Color),
+      cudaMemcpyHostToDevice));
     Color* d_upper_right;
     CudaSafeCall(cudaMalloc((void**)& d_upper_right, sizeof(Color)));
-    cudaMemcpy(d_upper_right, &upper_right, sizeof(Color),
-    cudaMemcpyHostToDevice));
+    CudaSafeCall(cudaMemcpy(d_upper_right, &upper_right, sizeof(Color),
+      cudaMemcpyHostToDevice));
     Color* d_lower_right;
     CudaSafeCall(cudaMalloc((void**)& d_lower_right, sizeof(Color)));
-    cudaMemcpy(d_lower_right, &lower_right, sizeof(Color),
-    cudaMemcpyHostToDevice));
+    CudaSafeCall(cudaMemcpy(d_lower_right, &lower_right, sizeof(Color),
+      cudaMemcpyHostToDevice));
     // Allocate image in device memory
     Image d_img;
     d_img.height = img.height;
@@ -150,16 +149,16 @@ void generate_image(Image img, const Color upper_left, const Color lower_left,
     ((img.height + dimBlock.y - 1) / dimBlock.y));
     bi__<<<dimGrid, dimBlock>>>(d_img, d_upper_left, d_lower_left, d_upper_right,
       d_lower_right);
-      CudaCheckError();
-      CudaSafeCall(cudaThreadSynchronize());
-      // Read image from device memory
-      CudaSafeCall(cudaMemcpy(img.pixels, d_img.pixels, size, cudaMemcpyDeviceToHost));
-      // Free device memory
-      CudaSafeCall(cudaFree(d_img.pixels));
-      CudaSafeCall(cudaFree(d_upper_left));
-      CudaSafeCall(cudaFree(d_lower_left));
-      CudaSafeCall(cudaFree(d_upper_right));
-      CudaSafeCall(cudaFree(d_lower_right));
+    CudaCheckError();
+    CudaSafeCall(cudaThreadSynchronize());
+    // Read image from device memory
+    CudaSafeCall(cudaMemcpy(img.pixels, d_img.pixels, size, cudaMemcpyDeviceToHost));
+    // Free device memory
+    CudaSafeCall(cudaFree(d_img.pixels));
+    CudaSafeCall(cudaFree(d_upper_left));
+    CudaSafeCall(cudaFree(d_lower_left));
+    CudaSafeCall(cudaFree(d_upper_right));
+    CudaSafeCall(cudaFree(d_lower_right));
 }
 
 int main(int argc, char* argv[]) {
@@ -208,9 +207,9 @@ int main(int argc, char* argv[]) {
   // OUTPUT
   std::ofstream outfile("output.ppm");
   // PPM header
-  outfile << "P6" << std::endl;
-  outfile << img.width << " " << img.height << std::endl;
-  outfile << "255" << std::endl;
+  outfile << "P6\n";
+  outfile << img.width << " " << img.height << "\n";
+  outfile << "255" << "\n";
   // Print image
   outfile.write(img.pixels, img.width * img.height * RGB_SIZE);
   outfile.close();

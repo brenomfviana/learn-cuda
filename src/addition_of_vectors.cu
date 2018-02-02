@@ -8,7 +8,7 @@
  * To run: ./addition_of_vectors.x SIZE_OF_VECTORS MAX_RANDOM_VALUE
  *
  * @author Breno Viana
- * @version 29/09/2017
+ * @version 02/02/2018
  */
 #include <ctime>
 #include <cstdio>
@@ -70,22 +70,22 @@ int main(int argc, char* argv[]) {
   CudaSafeCall(cudaFree(d_n));
   CudaSafeCall(cudaFree(d_p));
   // Print vectors
-  std::cout << "Vector 1:" << std::endl;
+  std::cout << "Vector 1:\n";
   for (int i = 0; i < size; i++) {
     std::cout << m[i] << " ";
   }
-  std::cout << std::endl << std::endl;
-  std::cout << "Vector 2:" << std::endl;
+  std::cout << "\n\n";
+  std::cout << "Vector 2:\n";
   for (int i = 0; i < size; i++) {
     std::cout << n[i] << " ";
   }
-  std::cout << std::endl << std::endl;
+  std::cout << "\n\n";
   // Print result
-  std::cout << "Resulting vector:" << std::endl;
+  std::cout << "Resulting vector:\n";
   for (int i = 0; i < size; i++) {
     std::cout << p[i] << " ";
   }
-  std::cout << std::endl;
+  std::cout << "\n";
   // Program successfully completed
   return EXIT_SUCCESS;
 }

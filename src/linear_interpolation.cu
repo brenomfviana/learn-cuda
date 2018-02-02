@@ -7,11 +7,9 @@
  * For example: ./linear_interpolation.x 200 100 "127.5 178.5 255" "255 255 255"
  *
  * @author Breno Viana
- * @version 26/10/2017
+ * @version 02/02/2018
  */
 #include <fstream>
-#include <cstdlib>
-#include <cstring>
 #include "error_checking.cuh"
 
 // Thread block size
@@ -44,7 +42,8 @@ typedef struct {
  * @param color Color
  * @param t Color intensity
  */
-__device__ Color operator*(const Color& color, const float t) {
+__device__
+Color operator*(const Color& color, const float t) {
   Color c = { color.r * t, color.g * t, color.b * t };
   return c;
 }
@@ -55,7 +54,8 @@ __device__ Color operator*(const Color& color, const float t) {
  * @param t Color intensity
  * @param color Color
  */
-__device__ Color operator*(const float t, const Color& color) {
+__device__
+Color operator*(const float t, const Color& color) {
   Color c = { color.r * t, color.g * t, color.b * t };
   return c;
 }
@@ -66,7 +66,8 @@ __device__ Color operator*(const float t, const Color& color) {
  * @param lhs Color 1
  * @param rhs Color 2
  */
-__device__ Color operator+(const Color& lhs, const Color& rhs) {
+__device__
+Color operator+(const Color& lhs, const Color& rhs) {
   Color c = { lhs.r + rhs.r, lhs.g + rhs.g, lhs.b + rhs.b };
   return c;
 }
@@ -80,13 +81,14 @@ __device__ Color operator+(const Color& lhs, const Color& rhs) {
  * @param upper_color Upper color
  * @param lower_color Lower color
  */
-__global__ void li__(Image img, Color* upper_color, Color* lower_color) {
+__global__
+void li__(Image img, Color* upper_color, Color* lower_color) {
   // Get matrix row
   int row = blockIdx.y * blockDim.y + threadIdx.y;
   // Get matrix column
   int col = blockIdx.x * blockDim.x + threadIdx.x;
   // Check if row and column are not valid
-  if (row > img.height || col > img.width) {
+  if (row >= img.height || col >= img.width) {
     return;
   }
   // Progression of the gradient
@@ -94,7 +96,7 @@ __global__ void li__(Image img, Color* upper_color, Color* lower_color) {
   // Get color
   Color c = (((1 - y) * (*lower_color)) + (y * (*upper_color)));
   // Set pixel color
-  img.pixels[((img.height - row - 1) * img.width * RGB_SIZE) + (col * RGB_SIZE)]   = c.r;
+  img.pixels[((img.height - row - 1) * img.width * RGB_SIZE) + (col * RGB_SIZE)] = c.r;
   img.pixels[((img.height - row - 1) * img.width * RGB_SIZE) + (col * RGB_SIZE) + 1] = c.g;
   img.pixels[((img.height - row - 1) * img.width * RGB_SIZE) + (col * RGB_SIZE) + 2] = c.b;
 }
