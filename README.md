@@ -28,6 +28,6 @@ nvcc -I include/ file-name.cu -o program-name.x
 ./program-name.x ARGS
 ```
 
-## CUDA Toolkit Documentation
+## References
 
 [CUDA Toolkit Documentation v8.0](http://docs.nvidia.com/cuda/index.html)
